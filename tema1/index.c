@@ -62,6 +62,7 @@ void setScoresOfUsers(char *name, double score){
 }
 
 void showScoresOf(char *name){
+    printf("\033[0;32m");
     FILE *fptr = fopen("classement.txt", "r");
     char classm[gamePlayed][5000];
     char classmCpy[5000];
@@ -102,17 +103,19 @@ void showScoresOf(char *name){
 }
 
 void showGeneralClassement(){
+    printf("\033[0;35m");
     FILE *fptr = fopen("classement.txt", "r");
     char classm[gamePlayed][5000];
     int size;
     char *token;
     char *doubleNr;
-    double totalScore = 0.00;
+    double totalScore;
     double score;
-    int scores[gamePlayed];
-    char name[50];
-    printf("intrat\n");
+    double scores[gamePlayed];
+    char name[5000];
+   
     for(int i = 0; i < gamePlayed; ++i){
+        totalScore = 0.00;
         fgets(classm[i], RSIZ, fptr);
         size = strlen(classm[i]);
         token = strtok(classm[i], " ");
@@ -127,14 +130,34 @@ void showGeneralClassement(){
         strcpy(classm[i], name);
         scores[i] = totalScore;
     }
-
-    
     fclose(fptr);
-    scanf("%lf", &score);
-    showMenu();
+
+    for(int i = 0; i < gamePlayed; ++i){
+        for(int j = i + 1; j < gamePlayed; ++j){
+            if(scores[i] < scores[j]){
+                size = scores[i];
+                scores[i] = scores[j];
+                scores[j] = size;
+                strcpy(name, classm[i]);
+                strcpy(classm[i], classm[j]);
+                strcpy(classm[j], name);
+            }
+        }
+    }
+    printf("General classement:\n");
+    for(int i = 0; i < gamePlayed; ++i){
+        printf("%d.Name: %s Score: %0.2f\n", (i + 1), classm[i], scores[i]);
+    }
+
+    if(gamePlayed < 1) printf("There hasn't one game played yet!!!\n");
+    
+    printf("If you want to go to main menu type 1, or 0 to exit game:\n");
+    scanf("%d", &size);
+    if(size) showMenu();
 }
 
 void startGame(){
+    printf("\033[0;31m");
     char line[77][RSIZ];
     FILE *fptr = NULL; 
     int currentLine = 0;
@@ -202,6 +225,7 @@ void startGame(){
 
 void showMenu(){
     system("clear");
+    printf("\033[0;30m");
     printf("Please choose one option:\n");
     printf("1.Start game\n");
     printf("2.General classement\n");
@@ -220,6 +244,7 @@ void showMenu(){
         showGeneralClassement();
         break;
     case 3:
+        printf("\033[0;32m");
         printf("Type the name: \n");
         char name[20];
         scanf("%s", name);
